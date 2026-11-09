@@ -28,7 +28,7 @@
 		"url": "https://github.com/eranmeir/obsidian-pointificate-links/issues"
 	},
 	"devDependencies": {
-		"@codemirror/state": "6.5.0",
+		"@codemirror/state": "6.7.6",
 		"@eslint/js": "^9.39.4",
 		"@types/node": "^22.15.17",
 		"esbuild": "0.25.5",

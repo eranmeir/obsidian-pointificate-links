@@ -1,4 +1,4 @@
-import { App, Editor, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Editor, Plugin, PluginSettingTab, SettingDefinitionItem } from 'obsidian';
 import { EditorState, Extension } from '@codemirror/state';
 
 interface PointificateSettings {
@@ -75,10 +75,6 @@ export default class PointificateLinksPlugin extends Plugin {
 		this.settings = { ...DEFAULT_SETTINGS, ...saved };
 	}
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
-
 	convertLinks(editor: Editor) {
 		let documentText = editor.getValue();
 
@@ -93,25 +89,18 @@ export default class PointificateLinksPlugin extends Plugin {
 	}
 }
 
+/**
+ * Declarative settings (Obsidian 1.13+). The default storage reads and writes
+ * `plugin.settings`, which is where this plugin keeps its settings.
+ */
 class PointificateSettingTab extends PluginSettingTab {
-	plugin: PointificateLinksPlugin;
-
-	constructor(app: App, plugin: PointificateLinksPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName('Automatically use pointy brackets')
-			.setDesc('When a Markdown link is inserted with a URL-encoded destination, such as by link autocomplete or paste, decode it and enclose it in pointy brackets. Links changed outside the editor, such as by renaming a file, are not affected; use the command instead.')
-			.addToggle((toggle) =>
-				toggle.setValue(this.plugin.settings.autoConvert).onChange(async (value) => {
-					this.plugin.settings.autoConvert = value;
-					await this.plugin.saveSettings();
-				}));
+	getSettingDefinitions(): SettingDefinitionItem[] {
+		return [
+			{
+				name: 'Automatically use pointy brackets',
+				desc: 'When a Markdown link is inserted with a URL-encoded destination, such as by link autocomplete or paste, decode it and enclose it in pointy brackets. Links changed outside the editor, such as by renaming a file, are not affected; use the command instead.',
+				control: { type: 'toggle', key: 'autoConvert', defaultValue: DEFAULT_SETTINGS.autoConvert },
+			},
+		];
 	}
 }
