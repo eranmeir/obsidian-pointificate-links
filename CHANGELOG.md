@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-09
+
+### Changed
+
+- The settings tab now uses Obsidian's declarative settings API, so the "Automatically use pointy brackets" setting appears in Obsidian's settings search.
+- Updated the build and lint setup to match the current Obsidian sample plugin, and updated dependencies.
+
+### Fixed
+
+- Resolved the lint errors and warnings reported by the community plugin review.
+
 ## [1.0.0] - 2026-11-09
 
 ### Added
@@ -15,5 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic conversion of encoded links as they are inserted into the editor (link autocomplete, paste, drag-and-drop), in the same undo step as the insertion.
 - Setting "Automatically use pointy brackets" to turn the automatic conversion on or off (on by default).
 
-[Unreleased]: https://github.com/eranmeir/obsidian-pointificate-links/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/eranmeir/obsidian-pointificate-links/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/eranmeir/obsidian-pointificate-links/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/eranmeir/obsidian-pointificate-links/releases/tag/1.0.0
