@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { EditorState, Extension } from '@codemirror/state';
 
 interface PointificateSettings {
@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS: PointificateSettings = {
 };
 
 // [text](dest%20with%20percent) -- destinations that are not already in <pointy brackets>
-const ENCODED_LINK_SOURCE = /\[([^\]\[]*)\]\(([^()<>]*(?:%)+[^()<>]*)\)/.source; // eslint-disable-line no-useless-escape
+const ENCODED_LINK_SOURCE = /\[([^\][]*)\]\(([^()<>]*%+[^()<>]*)\)/.source;
 
 /** Returns the pointy-bracket form of an encoded link, or null if it can't be safely converted. */
 function pointify(text: string, destination: string): string | null {
@@ -37,10 +37,12 @@ function buildTransactionFilter(plugin: PointificateLinksPlugin): Extension {
 			const text = inserted.toString();
 			if (!text.includes('%')) return;
 			for (const m of text.matchAll(new RegExp(ENCODED_LINK_SOURCE, 'g'))) {
-				const replacement = pointify(m[1], m[2]);
+				const [whole, linkText, destination] = m;
+				if (whole === undefined || linkText === undefined || destination === undefined) continue;
+				const replacement = pointify(linkText, destination);
 				if (replacement === null) continue;
-				const from = fromB + (m.index as number);
-				edits.push({ from, to: from + m[0].length, insert: replacement });
+				const from = fromB + m.index;
+				edits.push({ from, to: from + whole.length, insert: replacement });
 			}
 		});
 		if (edits.length === 0) return tr;
@@ -51,7 +53,7 @@ function buildTransactionFilter(plugin: PointificateLinksPlugin): Extension {
 }
 
 export default class PointificateLinksPlugin extends Plugin {
-	settings: PointificateSettings;
+	settings: PointificateSettings = { ...DEFAULT_SETTINGS };
 
 	async onload() {
 		await this.loadSettings();
@@ -62,25 +64,27 @@ export default class PointificateLinksPlugin extends Plugin {
 		this.addCommand({
 			id: 'convert-urlencoded-links-to-pointy',
 			name: 'Decode links and enclose in pointy brackets',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				this.convertLinks(editor, view);
+			editorCallback: (editor: Editor) => {
+				this.convertLinks(editor);
 			}
 		});
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		const saved = (await this.loadData()) as Partial<PointificateSettings> | null;
+		this.settings = { ...DEFAULT_SETTINGS, ...saved };
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
 
-	convertLinks(editor: Editor, view: MarkdownView) {
+	convertLinks(editor: Editor) {
 		let documentText = editor.getValue();
 
 		for (const m of editor.getValue().matchAll(new RegExp(ENCODED_LINK_SOURCE, 'gm'))) {
 			const [match, text, destination] = m;
+			if (match === undefined || text === undefined || destination === undefined) continue;
 			const replacement = pointify(text, destination);
 			if (replacement !== null) documentText = documentText.replace(match, () => replacement);
 		}
@@ -103,7 +107,7 @@ class PointificateSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Automatically use pointy brackets')
-			.setDesc('When a Markdown link is inserted with a URL-encoded destination (e.g. by link autocomplete or paste), decode it and enclose it in pointy brackets. Links changed outside the editor, such as by renaming a file, are not affected; use the command instead.')
+			.setDesc('When a Markdown link is inserted with a URL-encoded destination, such as by link autocomplete or paste, decode it and enclose it in pointy brackets. Links changed outside the editor, such as by renaming a file, are not affected; use the command instead.')
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.autoConvert).onChange(async (value) => {
 					this.plugin.settings.autoConvert = value;
