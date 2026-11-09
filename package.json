@@ -1,6 +1,6 @@
 {
 	"name": "pointificate-links",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Decode URL-encoded Markdown links and enclose them in pointy brackets, automatically when inserted or on demand.",
 	"main": "main.js",
 	"type": "module",
