@@ -1,6 +1,6 @@
 # Pointificate Links
 
-A simple plugin for Obsidian (https://obsidian.md) that decodes URL encoded links and encloses them in pointy (angled) brackets, which are more readable and comply with the [CommonMark spec](https://spec.commonmark.org/).
+A simple plugin for [Obsidian](https://obsidian.md) that decodes URL encoded links and encloses them in pointy (angled) brackets, which are more readable and comply with the [CommonMark spec](https://spec.commonmark.org/).
 
 With wikilinks turned off, Obsidian writes Markdown links with spaces encoded as `%20`:
 
@@ -13,6 +13,19 @@ This plugin turns them into:
 ```markdown
 [My Note](<My Note.md>)
 ```
+
+## Installation
+
+### From the community plugin directory
+
+1. In Obsidian, open **Settings → Community plugins** and turn off restricted mode.
+2. Select **Browse**, search for "Pointificate Links", then **Install** and **Enable**.
+
+### Manually
+
+1. Download `main.js` and `manifest.json` from the [latest release](https://github.com/eranmeir/obsidian-pointificate-links/releases/latest).
+2. Copy them into `<your vault>/.obsidian/plugins/pointificate-links/`.
+3. Reload Obsidian and enable the plugin under **Settings → Community plugins**.
 
 ## Behavior
 
@@ -38,3 +51,21 @@ Only links whose destination contains a `%` and is not already in pointy bracket
   - the decoded destination contains `<`, `>` or a line break, which would break the pointy brackets.
 - **The manual command replaces the whole document text**, so it may reset the cursor position and scroll position.
 - Links already in pointy brackets, wikilinks and links without `%` are never modified.
+
+## Privacy
+
+The plugin works entirely locally. It makes no network requests, collects no telemetry, needs no account or payment, and only reads and edits the note you have open in the editor.
+
+## Development
+
+```sh
+npm install
+npm run dev     # rebuild main.js on every change
+npm run build   # type-check and produce a production main.js
+```
+
+To test in a vault, put (or symlink) this folder at `<vault>/.obsidian/plugins/pointificate-links/`. The folder name must match the `id` in `manifest.json`.
+
+## License
+
+[MIT](LICENSE)

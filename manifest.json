@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-pointificate-links",
+	"id": "pointificate-links",
 	"name": "Pointificate Links",
 	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Dogmatic Markdown links in Obsidian",
+	"minAppVersion": "1.14.5",
+	"description": "Decode URL-encoded Markdown links and enclose them in pointy brackets.",
 	"author": "Eran Meir",
-	"authorUrl": "https://github.com/eranmeir/obsidian-pointificate-links",
+	"authorUrl": "https://github.com/eranmeir",
 	"isDesktopOnly": false
 }
